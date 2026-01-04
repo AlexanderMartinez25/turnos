@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../components/layouts/BaseLayout.astro";
+import AppLayout from "../components/layouts/AppLayout.astro";
+import EmployeeCard from "../components/cards/EmployeeCard.astro";
+
+import { resolveWeek } from "../domain/resolveWeek";
+import { getTodayDay } from "../utils/today";
+
+// resolvemos semana actual
+const data = resolveWeek(new Date());
+
+// día actual (lunes, martes, etc.)
+const today = getTodayDay();
+
+// filtramos solo quienes trabajan hoy
+const workingToday = data.filter((emp) => emp.dias[today]?.trabaja);
+---
+
+<BaseLayout title="Hoy">
+  <AppLayout>
+    <h2 class="text-sm text-slate-400 mb-2">
+      Hoy: <span class="capitalize text-accent">{today}</span>
+    </h2>
+
+    {
+      workingToday.length === 0 && (
+        <p class="text-slate-500 text-sm">No hay empleados trabajando hoy.</p>
+      )
+    }
+
+    {
+      workingToday.map((emp) => (
+        <EmployeeCard
+          empleado={emp.empleado}
+          turno={emp.turno}
+          dias={{
+            [today]: emp.dias[today],
+          }}
+        />
+      ))
+    }
+  </AppLayout>
+</BaseLayout>

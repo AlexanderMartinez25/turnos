@@ -1,0 +1,16 @@
+---
+import "../../styles/tailwind.css";
+const { title = "Turnos" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" transition:animate>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-base text-slate-100 antialiased tracking-tight">
+    <slot />
+  </body>
+</html>

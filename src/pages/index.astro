@@ -1,0 +1,30 @@
+---
+import EmployeeCard from "../components/cards/EmployeeCard.astro";
+import AppLayout from "../components/layouts/AppLayout.astro";
+import BaseLayout from "../components/layouts/BaseLayout.astro";
+import { resolveWeek } from "../domain/resolveWeek";
+import { addWeeks } from "../domain/weekNavigation";
+
+// navegación por URL
+const offset = Number(Astro.url.searchParams.get("weekOffset") ?? 0);
+
+// fecha objetivo
+const targetDate = addWeeks(new Date(), offset);
+
+// dominio → datos reales
+const employeesWeek = resolveWeek(targetDate);
+---
+
+<BaseLayout title="Turnos">
+  <AppLayout>
+    {
+      employeesWeek.map((emp) => (
+        <EmployeeCard
+          empleado={emp.empleado}
+          turno={emp.turno}
+          dias={emp.dias}
+        />
+      ))
+    }
+  </AppLayout>
+</BaseLayout>

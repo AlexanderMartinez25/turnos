@@ -1,0 +1,62 @@
+---
+import BuildingTag from "../indicators/BuildingTag.astro";
+import FreeBadge from "../badges/FreeBadge.astro";
+import LateEntryBadge from "../badges/LateEntryBadge.astro";
+import EarlyExitBadge from "../badges/EarlyExitBadge.astro";
+import WorkingNowBadge from "../badges/WorkingNowBadge.astro";
+import { isWorkingNow } from "../../utils/isWorkingNow";
+import TimeRemainingBadge from "../badges/TimeRemainingBadge.astro";
+import { getTimeRemaining } from "../../utils/timeRemaining";
+
+const { dia, data, isToday = false } = Astro.props;
+const workingNow =
+  isToday && data.trabaja && isWorkingNow(data.entrada, data.salida);
+
+const remaining = workingNow
+  ? getTimeRemaining(data.entrada, data.salida)
+  : null;
+---
+
+<div
+  class={[
+    "rounded-lg p-2 sm:p-3 space-y-1 border",
+    isToday ? "bg-accent/10 border-accent" : "bg-surface border-slate-800",
+  ].join(" ")}
+>
+  <div class="flex justify-between items-center">
+    <span
+      class="text-xs font-medium uppercase tracking-wide text-slate-400 flex items-center gap-1"
+    >
+      {dia}
+      {isToday && <span class="text-[10px] text-accent">(hoy)</span>}
+    </span>
+
+    <div class="flex items-center gap-1">
+      {!data.trabaja && <FreeBadge />}
+      {workingNow && <WorkingNowBadge />}
+      {
+        remaining && (
+          <TimeRemainingBadge
+            hours={remaining.hours}
+            minutes={remaining.minutes}
+          />
+        )
+      }
+    </div>
+  </div>
+
+  {
+    data.trabaja && (
+      <div class="text-[11px] sm:text-xs text-slate-300 flex items-center gap-2 flex-wrap">
+        <span class="text-sm font-medium text-slate-200">
+          {data.entrada} – {data.salida}
+        </span>
+
+        {data.flags?.includes("LATE_ENTRY") && <LateEntryBadge />}
+        {data.flags?.includes("EARLY_EXIT") && <EarlyExitBadge />}
+      </div>
+    )
+  }
+
+  <BuildingTag edificio={data.edificio} />
+</div>

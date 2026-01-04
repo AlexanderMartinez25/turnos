@@ -1,0 +1,29 @@
+---
+import DayCard from "./DayCard.astro";
+import { getTodayDay } from "../../utils/today";
+
+const { dias } = Astro.props;
+
+const ORDER = [
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábado",
+  "domingo",
+];
+
+const today = getTodayDay();
+
+// solo días que existen en el objeto
+const visibleDays = ORDER.filter((day) => dias[day]);
+---
+
+<div class="grid grid-cols-2 gap-2 sm:gap-3">
+  {
+    visibleDays.map((day) => (
+      <DayCard dia={day} data={dias[day]} isToday={day === today} />
+    ))
+  }
+</div>

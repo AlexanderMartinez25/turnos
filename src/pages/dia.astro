@@ -1,0 +1,102 @@
+---
+import BaseLayout from "../components/layouts/BaseLayout.astro";
+import AppLayout from "../components/layouts/AppLayout.astro";
+
+import { resolveWeek } from "../domain/resolveWeek";
+import { addWeeks } from "../domain/weekNavigation";
+import { getTodayDay } from "../utils/today";
+
+const DAYS = [
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábado",
+  "domingo",
+];
+
+// params
+const dayParam = Astro.url.searchParams.get("day");
+const offset = Number(Astro.url.searchParams.get("weekOffset") ?? 0);
+
+// fecha objetivo
+const targetDate = addWeeks(new Date(), offset);
+const weekData = resolveWeek(targetDate);
+
+// día seleccionado
+const selectedDay = DAYS.includes(dayParam) ? dayParam : getTodayDay();
+
+// empleados que trabajan ese día
+const agenda = weekData
+  .map((emp) => ({
+    nombre: emp.empleado,
+    turno: emp.turno,
+    ...emp.dias[selectedDay],
+  }))
+  .filter((d) => d.trabaja);
+---
+
+<BaseLayout title="Agenda diaria">
+  <AppLayout>
+    <header class="space-y-1">
+      <h2 class="text-lg font-semibold capitalize text-accent">
+        {selectedDay}
+      </h2>
+
+      <p class="text-xs text-slate-400">Agenda diaria</p>
+    </header>
+
+    <nav class="flex gap-2 overflow-x-auto pb-2">
+      {
+        DAYS.map((d) => (
+          <a
+            href={`/dia?day=${d}&weekOffset=${offset}`}
+            class={[
+              "text-xs px-3 py-1 rounded-full border transition-colors active:scale-95",
+              d === selectedDay
+                ? "bg-accent text-base font-semibold border-accent"
+                : "border-slate-700 text-slate-400 hover:bg-slate-800",
+            ].join(" ")}
+          >
+            {d.slice(0, 3)}
+          </a>
+        ))
+      }
+    </nav>
+
+    <section
+      transition:name="agenda-dia"
+      class="space-y-3 transition-opacity duration-150"
+    >
+      {
+        agenda.length === 0 && (
+          <p class="text-slate-500 text-sm">
+            No hay empleados trabajando este día.
+          </p>
+        )
+      }
+
+      <ul class="space-y-3">
+        {
+          agenda.map((item) => (
+            <li class="bg-surface rounded-lg p-4 flex justify-between items-center">
+              <div>
+                <p class="font-medium">{item.nombre}</p>
+                <p class="text-xs text-slate-400">
+                  {item.entrada} – {item.salida}
+                </p>
+              </div>
+
+              {item.edificio && (
+                <span class="text-xs px-2 py-1 rounded bg-slate-800 text-slate-300">
+                  {item.edificio}
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </AppLayout>
+</BaseLayout>

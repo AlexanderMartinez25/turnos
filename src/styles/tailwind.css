@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base: #0f172a;      /* fondo principal */
+  --color-surface: #020617;   /* cards */
+  --color-accent: #22d3ee;    /* cyan */
+  --color-success: #22c55e;   /* verde */
+  --color-warning: #facc15;   /* amarillo */
+}
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::view-transition-new(agenda-dia) {
+  animation: fade-slide-in 180ms ease-out;
+}
+
+::view-transition-old(agenda-dia) {
+  animation: none;
+}

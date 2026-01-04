@@ -1,0 +1,20 @@
+---
+import ShiftBadge from "../badges/ShiftBadge.astro";
+import WeekGrid from "./WeekGrid.astro";
+
+const { empleado, turno, dias } = Astro.props;
+---
+
+<article
+  class="bg-surface rounded-xl p-4 space-y-4 snap-start border border-slate-800"
+>
+  <header class="flex justify-between items-center">
+    <h2 class="font-semibold text-white tracking-tight">
+      {empleado}
+    </h2>
+
+    <ShiftBadge turno={turno} />
+  </header>
+
+  <WeekGrid dias={dias} />
+</article>
