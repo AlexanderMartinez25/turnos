@@ -14,6 +14,7 @@ npm run dev
 ```
 
 Abrir:
+
 - `http://localhost:4321/` → Vista semanal
 - `http://localhost:4321/hoy` → Vista operativa diaria
 - `http://localhost:4321/dia` → Agenda por día
@@ -113,6 +114,7 @@ npm run preview  # Preview build
 ## 📈 Escalabilidad futura
 
 El proyecto está preparado para:
+
 - Backend / API
 - Autenticación
 - Edición de turnos
@@ -134,8 +136,3 @@ El proyecto está preparado para:
 ## 👤 Autor
 
 Proyecto diseñado con foco en **claridad, mantenibilidad y uso real en producción**.
-
----
-
-> Este README resume la documentación técnica completa del proyecto.
-
