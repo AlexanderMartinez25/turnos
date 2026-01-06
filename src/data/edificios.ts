@@ -7,14 +7,14 @@ export const EDIFICIOS: BuildingAssignment[] = [
   },
   {
     turnoId: 2,
-    asignacion: { martes: "C2", miércoles: "C6", jueves: "C1", viernes: "C5" },
+    asignacion: { martes: "C2", miercoles: "C6", jueves: "C1", viernes: "C5" },
   },
   {
     turnoId: 3,
     asignacion: {
       lunes: "C7",
       martes: "C1",
-      miércoles: "C4–C9",
+      miercoles: "C4–C9",
       jueves: "C5",
       viernes: "C6",
     },
@@ -24,20 +24,20 @@ export const EDIFICIOS: BuildingAssignment[] = [
     asignacion: {
       lunes: "Apoyo",
       martes: "Apoyo",
-      miércoles: "Apoyo",
+      miercoles: "Apoyo",
       jueves: "Apoyo",
       viernes: "Apoyo",
     },
   },
   {
     turnoId: 5,
-    asignacion: { lunes: "C1", martes: "C5", miércoles: "C2" },
+    asignacion: { lunes: "C1", martes: "C5", miercoles: "C2" },
   },
   {
     turnoId: 6,
     asignacion: {
       martes: "C4–C9",
-      miércoles: "C5",
+      miercoles: "C5",
       jueves: "C7",
       viernes: "C2",
     },
@@ -47,7 +47,7 @@ export const EDIFICIOS: BuildingAssignment[] = [
     asignacion: {
       lunes: "C5",
       martes: "C6",
-      miércoles: "C7",
+      miercoles: "C7",
       jueves: "C4–C9",
       viernes: "C7",
     },
@@ -57,7 +57,7 @@ export const EDIFICIOS: BuildingAssignment[] = [
     asignacion: {
       lunes: "C6",
       martes: "Apoyo",
-      miércoles: "C1",
+      miercoles: "C1",
       jueves: "C2",
       viernes: "C4–C9",
     },
@@ -67,7 +67,7 @@ export const EDIFICIOS: BuildingAssignment[] = [
     asignacion: {
       lunes: "C4–C9",
       martes: "C7",
-      miércoles: "Apoyo",
+      miercoles: "Apoyo",
       jueves: "Apoyo",
       viernes: "Apoyo",
     },

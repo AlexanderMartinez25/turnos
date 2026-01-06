@@ -1,14 +1,27 @@
-import type { Day } from "../data/types";
-
-export function getTodayDay(): Day {
-  const map: Day[] = [
+/**
+ * Retorna el día actual SIN acentos
+ * Usado para:
+ * - URLs
+ * - estado UI
+ * - comparaciones seguras
+ */
+export function getTodayDay():
+  | "lunes"
+  | "martes"
+  | "miercoles"
+  | "jueves"
+  | "viernes"
+  | "sabado"
+  | "domingo" {
+  const days = [
     "domingo",
     "lunes",
     "martes",
-    "miércoles",
+    "miercoles",
     "jueves",
     "viernes",
-    "sábado",
-  ];
-  return map[new Date().getDay()];
+    "sabado",
+  ] as const;
+
+  return days[new Date().getDay()];
 }

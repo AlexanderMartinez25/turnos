@@ -5,91 +5,161 @@ import AppLayout from "../components/layouts/AppLayout.astro";
 import { resolveWeek } from "../domain/resolveWeek";
 import { addWeeks } from "../domain/weekNavigation";
 import { getTodayDay } from "../utils/today";
-
+/**
+ * Días seguros para URL (SIN acentos)
+ */
 const DAYS = [
-  "lunes",
-  "martes",
-  "miércoles",
-  "jueves",
-  "viernes",
-  "sábado",
-  "domingo",
+  { key: "lunes", label: "Lun" },
+  { key: "martes", label: "Mar" },
+  { key: "miercoles", label: "Mié" },
+  { key: "jueves", label: "Jue" },
+  { key: "viernes", label: "Vie" },
+  { key: "sabado", label: "Sáb" },
+  { key: "domingo", label: "Dom" },
 ];
 
-// params
-const dayParam = Astro.url.searchParams.get("day");
+/**
+ * Query params
+ */
+const rawDay = Astro.url.searchParams.get("day");
 const offset = Number(Astro.url.searchParams.get("weekOffset") ?? 0);
 
-// fecha objetivo
+/**
+ * Día actual normalizado (blindado)
+ */
+const todayMap: Record<string, string> = {
+  lunes: "lunes",
+  martes: "martes",
+  miércoles: "miercoles",
+  jueves: "jueves",
+  viernes: "viernes",
+  sábado: "sabado",
+  domingo: "domingo",
+};
+
+const todayRaw = getTodayDay(); // puede venir con o sin acento
+const todayKey = todayMap[todayRaw] ?? "lunes";
+
+/**
+ * Día seleccionado (SIEMPRE definido)
+ */
+const selectedDay = DAYS.some((d) => d.key === rawDay) ? rawDay : todayKey;
+/**
+ * Día real para acceder al dominio
+ */
+const domainDay = selectedDay;
+/**
+ * Resolver semana
+ */
 const targetDate = addWeeks(new Date(), offset);
 const weekData = resolveWeek(targetDate);
+console.log("DEBUG selectedDay:", selectedDay);
+console.log("DEBUG domainDay:", domainDay);
+console.log("DEBUG dias keys:", Object.keys(weekData[0].dias));
 
-// día seleccionado
-const selectedDay = DAYS.includes(dayParam) ? dayParam : getTodayDay();
+console.log(
+  "DEBUG lunes:",
+  weekData.map((e) => e.dias.lunes)
+);
+console.log(
+  "DEBUG martes:",
+  weekData.map((e) => e.dias.martes)
+);
 
-// empleados que trabajan ese día
+/**
+ * Agenda diaria
+ */
 const agenda = weekData
-  .map((emp) => ({
-    nombre: emp.empleado,
-    turno: emp.turno,
-    ...emp.dias[selectedDay],
-  }))
-  .filter((d) => d.trabaja);
+  .map((emp) => {
+    const dayData = emp.dias[domainDay];
+    return dayData ? { nombre: emp.empleado, ...dayData } : null;
+  })
+  .filter((item) => item && item.trabaja);
 ---
 
 <BaseLayout title="Agenda diaria">
   <AppLayout>
-    <header class="space-y-1">
-      <h2 class="text-lg font-semibold capitalize text-accent">
+    <!-- Header -->
+    <header class="mb-4">
+      <h1 class="text-xl font-semibold text-slate-100">Agenda diaria</h1>
+      <p class="text-sm text-accent capitalize">
         {selectedDay}
-      </h2>
-
-      <p class="text-xs text-slate-400">Agenda diaria</p>
+        {
+          selectedDay === todayKey && (
+            <span class="ml-2 text-xs uppercase opacity-80">hoy</span>
+          )
+        }
+      </p>
     </header>
 
-    <nav class="flex gap-2 overflow-x-auto pb-2">
+    <!-- Navegación de días -->
+    <nav class="flex gap-2 overflow-x-auto pb-4 pt-2">
       {
-        DAYS.map((d) => (
-          <a
-            href={`/dia?day=${d}&weekOffset=${offset}`}
-            class={[
-              "text-xs px-3 py-1 rounded-full border transition-colors active:scale-95",
-              d === selectedDay
-                ? "bg-accent text-base font-semibold border-accent"
-                : "border-slate-700 text-slate-400 hover:bg-slate-800",
-            ].join(" ")}
-          >
-            {d.slice(0, 3)}
-          </a>
-        ))
+        DAYS.map((d) => {
+          const isActive = d.key === selectedDay;
+          const isToday = d.key === todayKey;
+
+          return (
+            <a
+              href={`/dia?day=${d.key}&weekOffset=${offset}`}
+              class={[
+                "relative text-xs px-3 py-1 rounded-full border transition-all",
+                isActive
+                  ? "bg-accent text-base font-semibold border-accent scale-105"
+                  : "border-slate-700 text-slate-400 hover:bg-slate-800",
+              ].join(" ")}
+            >
+              {d.label}
+              {isToday && (
+                <span class="absolute -top-2 -right-2 text-[9px] px-1 rounded bg-accent text-base">
+                  hoy
+                </span>
+              )}
+            </a>
+          );
+        })
       }
     </nav>
 
-    <section
-      transition:name="agenda-dia"
-      class="space-y-3 transition-opacity duration-150"
-    >
+    <!-- Agenda (con animación) -->
+    <section key={selectedDay} class="space-y-3 animate-fade-in">
       {
         agenda.length === 0 && (
-          <p class="text-slate-500 text-sm">
+          <div class="rounded-lg border border-dashed border-slate-700 p-4 text-sm text-slate-400">
             No hay empleados trabajando este día.
-          </p>
+          </div>
         )
       }
 
       <ul class="space-y-3">
         {
           agenda.map((item) => (
-            <li class="bg-surface rounded-lg p-4 flex justify-between items-center">
+            <li class="bg-surface rounded-lg p-4 flex justify-between items-center border border-slate-800">
               <div>
                 <p class="font-medium">{item.nombre}</p>
-                <p class="text-xs text-slate-400">
+
+                <p class="text-xs text-slate-400 mt-1">
                   {item.entrada} – {item.salida}
                 </p>
+
+                {item.flags?.length > 0 && (
+                  <div class="flex gap-1 mt-1">
+                    {item.flags.includes("LATE_ENTRY") && (
+                      <span class="text-[10px] px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400">
+                        Entrada tardía
+                      </span>
+                    )}
+                    {item.flags.includes("EARLY_EXIT") && (
+                      <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400">
+                        Sale 17:00
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {item.edificio && (
-                <span class="text-xs px-2 py-1 rounded bg-slate-800 text-slate-300">
+                <span class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-300">
                   {item.edificio}
                 </span>
               )}
