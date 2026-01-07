@@ -1,12 +1,10 @@
-// function getWeekDiff(baseDate, targetDate): number
-// return floor((targetDate - baseDate) / 7 días)
-
-// function getTurnoActual(turnoInicial, weekDiff): number
-// return ((turnoInicial - 1 + weekDiff) % 9) + 1
+import { BASE_DATE } from "./constants";
+import { weekDiff } from "./calendar";
 
 export function resolveTurnoActual(
   turnoInicial: number,
-  weekDiff: number
-): number {
-  return ((turnoInicial - 1 + weekDiff) % 9) + 1;
+  targetDate: Date
+) {
+  const diff = weekDiff(BASE_DATE, targetDate);
+  return ((turnoInicial - 1 + diff) % 9) + 1;
 }

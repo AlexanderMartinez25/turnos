@@ -1,65 +1,149 @@
 ---
+import BaseLayout from "../components/layouts/BaseLayout.astro";
+
 import { resolveWeek } from "../domain/resolveWeek";
 import { getTodayDay } from "../utils/today";
-import { isWorkingNow } from "../utils/isWorkingNow";
+import { formatDayLabel } from "../utils/formatDate";
 
-const data = resolveWeek(new Date());
-const today = getTodayDay();
+/**
+ * Día actual
+ */
+const todayKey = getTodayDay();
+const today = new Date();
 
-// empleados que trabajan hoy
-const workingToday = data.filter((emp) => emp.dias[today]?.trabaja);
+/**
+ * Resolver semana
+ */
+const weekData = resolveWeek(today);
+
+/**
+ * Separar activos y libres
+ */
+const activos = [];
+const libres = [];
+
+for (const emp of weekData) {
+  const d = emp.dias[todayKey];
+
+  if (d?.trabaja) {
+    activos.push({
+      nombre: emp.empleado,
+      turno: emp.turno,
+      ...d,
+    });
+  } else {
+    libres.push({
+      nombre: emp.empleado,
+      turno: emp.turno,
+    });
+  }
+}
+
+/**
+ * Label fecha
+ */
+const dayLabel = formatDayLabel(today, todayKey);
 ---
 
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard Turnos</title>
-    <meta http-equiv="refresh" content="600" />
-    <!-- auto refresh cada 60s -->
-    <link rel="stylesheet" href="/src/styles/tailwind.css" />
-  </head>
-  <body class="bg-base text-slate-100 min-h-screen p-8 text-[18px]">
-    <header class="mb-6">
-      <h1 class="text-3xl font-bold tracking-tight">Turnos – Hoy</h1>
-      <p class="text-lg capitalize text-accent">
-        {today}
+<BaseLayout title="Dashboard">
+  <main class="min-h-screen bg-base text-slate-100 p-6">
+    <!-- Header -->
+    <header class="mb-10 text-center">
+      <h1 class="text-3xl font-semibold">
+        Turnos de Hoy
+      </h1>
+      <p class="text-lg text-accent mt-1">
+        {dayLabel}
       </p>
     </header>
 
-    <section class="grid grid-cols-2 xl:grid-cols-3 gap-6">
-      {
-        workingToday.map((emp) => {
-          const d = emp.dias[today];
-          const workingNow = isWorkingNow(d.entrada, d.salida);
+    <!-- ACTIVOS -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">
+        En turno
+      </h2>
 
-          return (
-            <article class="bg-surface rounded-2xl p-6 border border-slate-800">
-              <div class="flex justify-between items-start mb-4">
-                <h2 class="text-xl font-semibold">{emp.empleado}</h2>
-                <span class="text-sm text-slate-400">Turno {emp.turno}</span>
+      {activos.length === 0 ? (
+        <div class="text-center text-xl text-slate-400">
+          No hay personal en turno
+        </div>
+      ) : (
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {activos.map((item) => (
+            <article class="bg-surface rounded-xl p-6 border border-slate-800 flex flex-col justify-between">
+              <!-- Header card -->
+              <div class="flex justify-between items-start">
+                <h3 class="text-xl font-medium">
+                  {item.nombre}
+                </h3>
+
+                <!-- TURNO destacado -->
+                <span class="text-lg font-semibold px-3 py-1 rounded-lg bg-accent text-base">
+                  T{item.turno}
+                </span>
               </div>
 
-              <p class="text-lg">
-                {d.entrada} – {d.salida}
-              </p>
-
-              {d.edificio && (
-                <p class="mt-2 text-sm bg-slate-800 inline-block px-3 py-1 rounded">
-                  {d.edificio}
+              <!-- Horario -->
+              <div class="mt-4">
+                <p class="text-lg">
+                  {item.entrada} – {item.salida}
                 </p>
-              )}
 
-              {workingNow && (
-                <p class="mt-4 text-emerald-400 text-sm font-semibold">
-                  ● Trabajando ahora
-                </p>
-              )}
+                {item.flags?.includes("LATE_ENTRY") && (
+                  <p class="text-sm text-yellow-400 mt-1">
+                    Entrada tardía
+                  </p>
+                )}
+
+                {item.flags?.includes("EARLY_EXIT") && (
+                  <p class="text-sm text-cyan-400 mt-1">
+                    Sale a las 17:00
+                  </p>
+                )}
+              </div>
+
+              <!-- Edificio -->
+              <div class="mt-6">
+                {item.edificio ? (
+                  <span class="inline-block text-base font-bold px-4 py-2 rounded-full bg-slate-300">
+                    {item.edificio}
+                  </span>
+                ) : (
+                  <span class="text-sm text-slate-500">
+                    Sin asignación
+                  </span>
+                )}
+              </div>
             </article>
-          );
-        })
-      }
+          ))}
+        </div>
+      )}
     </section>
-  </body>
-</html>
+
+    <!-- LIBRES -->
+    <section class="mt-12">
+      <h2 class="text-xl font-semibold mb-4 text-slate-300">
+        Libres hoy
+      </h2>
+
+      {libres.length === 0 ? (
+        <p class="text-slate-500">
+          No hay personal libre hoy.
+        </p>
+      ) : (
+        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+          {libres.map((item) => (
+            <div class="bg-slate-900/40 border border-slate-800 rounded-lg p-4 text-center">
+              <p class="font-medium text-slate-300">
+                {item.nombre}
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                Turno {item.turno}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  </main>
+</BaseLayout>

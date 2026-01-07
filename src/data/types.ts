@@ -28,3 +28,15 @@ export interface BuildingAssignment {
   turnoId: number;
   asignacion: Partial<Record<Day, string>>;
 }
+
+export type Horario = {
+  entrada: string;
+  salida: string;
+};
+
+export type TurnoDef = {
+  id: number;
+  diasLibres: Day[];
+  horarios: Partial<Record<Day, Horario>>;
+};
+

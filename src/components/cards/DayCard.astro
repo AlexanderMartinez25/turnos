@@ -34,15 +34,17 @@ const remaining = workingNow
     <div class="flex items-center gap-1">
       {!data.trabaja && <FreeBadge />}
       {workingNow && <WorkingNowBadge />}
-      {
-        remaining && (
-          <TimeRemainingBadge
-            hours={remaining.hours}
-            minutes={remaining.minutes}
-          />
-        )
-      }
     </div>
+  </div>
+  <div>
+    {
+      remaining && (
+        <TimeRemainingBadge
+          hours={remaining.hours}
+          minutes={remaining.minutes}
+        />
+      )
+    }
   </div>
 
   {

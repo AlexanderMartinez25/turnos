@@ -1,14 +1,10 @@
 import { EMPLEADOS } from "../data/empleados";
-import { TURNOS } from "../data/turnos";
-import { EDIFICIOS } from "../data/edificios";
-import type { Day } from "../data/types";
-
-import { startOfWeek, weekDiff } from "./calendar";
+import { TURNOS, type DiaSemana } from "../data/turnos";
 import { resolveTurnoActual } from "./rotation";
+import { startOfWeek } from "./calendar";
 import { resolveDaySchedule } from "./schedule";
-import { resolveBuilding } from "./building";
 
-const DAYS: Day[] = [
+const DAYS: DiaSemana[] = [
   "lunes",
   "martes",
   "miercoles",
@@ -18,30 +14,30 @@ const DAYS: Day[] = [
   "domingo",
 ];
 
-export function resolveWeek(date: Date) {
-  const diff = weekDiff(date);
-  const weekStart = startOfWeek(date);
+export function resolveWeek(targetDate: Date) {
+  const weekStart = startOfWeek(targetDate);
 
   return EMPLEADOS.map((emp) => {
-    const turno = resolveTurnoActual(emp.turnoInicial, diff);
-    const shift = TURNOS.find((t) => t.id === turno)!;
+    // Turno correcto según fecha base
+    const turno = resolveTurnoActual(emp.turnoInicial, weekStart);
 
-    const dias = Object.fromEntries(
-      DAYS.map((day) => {
-        const schedule = resolveDaySchedule(shift, day);
-        const edificio = schedule.trabaja
-          ? resolveBuilding(turno, day, EDIFICIOS)
-          : null;
+    const shift = TURNOS[turno];
+    if (!shift) {
+      throw new Error(`Turno ${turno} no definido en TURNOS`);
+    }
 
-        return [day, { ...schedule, edificio }];
-      })
-    );
+    // Resolver días de la semana
+    const dias: Record<DiaSemana, any> = {} as any;
+
+    for (const day of DAYS) {
+      dias[day] = resolveDaySchedule(shift, day);
+    }
 
     return {
       empleado: emp.nombre,
       turno,
-      semana: weekStart,
       dias,
+      weekStart,
     };
   });
 }

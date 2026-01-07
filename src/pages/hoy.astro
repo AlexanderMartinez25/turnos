@@ -1,43 +1,111 @@
 ---
 import BaseLayout from "../components/layouts/BaseLayout.astro";
 import AppLayout from "../components/layouts/AppLayout.astro";
-import EmployeeCard from "../components/cards/EmployeeCard.astro";
 
 import { resolveWeek } from "../domain/resolveWeek";
 import { getTodayDay } from "../utils/today";
+import { formatDayLabel } from "../utils/formatDate";
 
-// resolvemos semana actual
-const data = resolveWeek(new Date());
+/**
+ * Día actual (key sin acento)
+ */
+const todayKey = getTodayDay();
 
-// día actual (lunes, martes, etc.)
-const today = getTodayDay();
+/**
+ * Resolver semana actual
+ */
+const today = new Date();
+const weekData = resolveWeek(today);
 
-// filtramos solo quienes trabajan hoy
-const workingToday = data.filter((emp) => emp.dias[today]?.trabaja);
+/**
+ * Agenda de hoy (solo quienes trabajan)
+ */
+const agenda = weekData
+  .map((emp) => {
+    const d = emp.dias[todayKey];
+    return d
+      ? {
+          nombre: emp.empleado,
+          turno: emp.turno,
+          ...d,
+        }
+      : null;
+  })
+  .filter((item) => item && item.trabaja);
+
+/**
+ * Label de fecha (ej: Martes · 14 Ene)
+ */
+const dayLabel = formatDayLabel(today, todayKey);
 ---
 
 <BaseLayout title="Hoy">
   <AppLayout>
-    <h2 class="text-sm text-slate-400 mb-2">
-      Hoy: <span class="capitalize text-accent">{today}</span>
-    </h2>
+    <!-- Header -->
+    <header class="mb-4">
+      <h1 class="text-xl font-semibold text-slate-100">
+        Hoy
+      </h1>
+      <p class="text-sm text-accent">
+        {dayLabel}
+      </p>
+    </header>
 
-    {
-      workingToday.length === 0 && (
-        <p class="text-slate-500 text-sm">No hay empleados trabajando hoy.</p>
-      )
-    }
+    <!-- Agenda -->
+    <section class="space-y-3">
+      {agenda.length === 0 && (
+        <div class="rounded-lg border border-dashed border-slate-700 p-4 text-sm text-slate-400">
+          Hoy no hay empleados trabajando.
+        </div>
+      )}
 
-    {
-      workingToday.map((emp) => (
-        <EmployeeCard
-          empleado={emp.empleado}
-          turno={emp.turno}
-          dias={{
-            [today]: emp.dias[today],
-          }}
-        />
-      ))
-    }
+      <ul class="space-y-3">
+        {agenda.map((item) => (
+          <li class="bg-surface rounded-lg p-4 border border-slate-800">
+            <div class="flex justify-between items-start gap-3">
+              <!-- Info principal -->
+              <div>
+                <p class="font-medium">
+                  {item.nombre}
+                </p>
+
+                <p class="text-xs text-slate-400 mt-1">
+                  {item.entrada} – {item.salida}
+                </p>
+
+                <!-- Flags -->
+                {item.flags?.length > 0 && (
+                  <div class="flex gap-1 mt-1">
+                    {item.flags.includes("LATE_ENTRY") && (
+                      <span class="text-[10px] px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400">
+                        Entrada tardía
+                      </span>
+                    )}
+                    {item.flags.includes("EARLY_EXIT") && (
+                      <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400">
+                        Sale 17:00
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <!-- Info secundaria -->
+              <div class="text-right">
+                {item.edificio && (
+                  <span class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-300">
+                    {item.edificio}
+                  </span>
+                )}
+
+                <p class="text-[10px] text-slate-500 mt-1">
+                  Turno {item.turno}
+                </p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
   </AppLayout>
 </BaseLayout>

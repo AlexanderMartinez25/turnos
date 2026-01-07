@@ -5,6 +5,8 @@ import AppLayout from "../components/layouts/AppLayout.astro";
 import { resolveWeek } from "../domain/resolveWeek";
 import { addWeeks } from "../domain/weekNavigation";
 import { getTodayDay } from "../utils/today";
+import { formatDayLabel } from "../utils/formatDate";
+import { getWeekStart } from "../utils/getWeekStart";
 /**
  * Días seguros para URL (SIN acentos)
  */
@@ -53,18 +55,27 @@ const domainDay = selectedDay;
  */
 const targetDate = addWeeks(new Date(), offset);
 const weekData = resolveWeek(targetDate);
-console.log("DEBUG selectedDay:", selectedDay);
-console.log("DEBUG domainDay:", domainDay);
-console.log("DEBUG dias keys:", Object.keys(weekData[0].dias));
 
-console.log(
-  "DEBUG lunes:",
-  weekData.map((e) => e.dias.lunes)
-);
-console.log(
-  "DEBUG martes:",
-  weekData.map((e) => e.dias.martes)
-);
+// índice del día (lunes = 0)
+const DAY_INDEX: Record<string, number> = {
+  lunes: 0,
+  martes: 1,
+  miercoles: 2,
+  jueves: 3,
+  viernes: 4,
+  sabado: 5,
+  domingo: 6,
+};
+
+// Fecha base de la semana (lunes)
+const weekStart = getWeekStart(targetDate);
+const dayOffset = DAY_INDEX[selectedDay];
+
+const selectedDate = new Date(weekStart);
+selectedDate.setDate(weekStart.getDate() + dayOffset);
+
+// Label final
+const dayLabel = formatDayLabel(selectedDate, selectedDay);
 
 /**
  * Agenda diaria
@@ -82,8 +93,9 @@ const agenda = weekData
     <!-- Header -->
     <header class="mb-4">
       <h1 class="text-xl font-semibold text-slate-100">Agenda diaria</h1>
-      <p class="text-sm text-accent capitalize">
-        {selectedDay}
+
+      <p class="text-sm text-accent">
+        {dayLabel}
         {
           selectedDay === todayKey && (
             <span class="ml-2 text-xs uppercase opacity-80">hoy</span>

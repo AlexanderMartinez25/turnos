@@ -1,39 +1,54 @@
-import { DEFAULT_SCHEDULE } from "../data/config";
-import type { Shift, Day } from "../data/types";
+import type { TurnoDef } from "../data/types";
 
-interface DayResult {
+export type DayResult = {
   trabaja: boolean;
   entrada?: string;
   salida?: string;
-  flags: Array<"LATE_ENTRY" | "EARLY_EXIT">;
-}
+  edificio?: string | null;
+  flags: string[];
+};
 
-export function resolveDaySchedule(shift: Shift, day: Day): DayResult {
-  // 1. Día libre
+/**
+ * Resuelve el estado de UN día para un turno específico
+ */
+export function resolveDaySchedule(
+  shift: TurnoDef,
+  day: DiaSemana
+): DayResult {
+  // Día libre
   if (shift.diasLibres.includes(day)) {
-    return { trabaja: false, flags: [] };
+    return {
+      trabaja: false,
+      flags: [],
+      edificio: null,
+    };
   }
 
-  // 2. Horario base o específico
-  const base = shift.horarios?.[day] ?? DEFAULT_SCHEDULE;
-  let entrada = base.entrada;
-  let salida = base.salida;
+  const horario = shift.horarios[day];
 
-  const flags: DayResult["flags"] = [];
+  if (!horario) {
+    return {
+      trabaja: false,
+      flags: [],
+      edificio: null,
+    };
+  }
 
-  // 3. Flags visuales
-  if (entrada === "10:30") flags.push("LATE_ENTRY");
+  const flags: string[] = [];
 
-  // 4. Regla global: viernes salida 17:00
-  if (day === "viernes") {
-    salida = "17:00";
+  if (horario.entrada === "10:30") {
+    flags.push("LATE_ENTRY");
+  }
+
+  if (horario.salida === "17:00") {
     flags.push("EARLY_EXIT");
   }
 
   return {
     trabaja: true,
-    entrada,
-    salida,
+    entrada: horario.entrada,
+    salida: horario.salida,
     flags,
+    edificio: null, // se asigna luego
   };
 }
