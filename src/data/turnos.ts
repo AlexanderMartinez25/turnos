@@ -57,11 +57,11 @@ export const TURNOS: Record<number, TurnoDef> = {
 
   5: {
     id: 5,
-    diasLibres: ["martes", "miercoles"],
+    diasLibres: ["jueves", "viernes"],
     horarios: {
       lunes: { entrada: "08:00", salida: "18:00" },
-      jueves: { entrada: "08:00", salida: "18:00" },
-      viernes: { entrada: "08:00", salida: "17:00" }, // salida anticipada
+      martes: { entrada: "08:00", salida: "18:00" },
+      miercoles: { entrada: "08:00", salida: "17:00" }, // salida anticipada
       sabado: { entrada: "08:00", salida: "18:00" },
       domingo: { entrada: "08:00", salida: "18:00" },
     },
