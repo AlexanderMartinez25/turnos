@@ -17,14 +17,18 @@ const employeesWeek = resolveWeek(targetDate);
 
 <BaseLayout title="Turnos">
   <AppLayout>
-    {
-      employeesWeek.map((emp) => (
-        <EmployeeCard
-          empleado={emp.empleado}
-          turno={emp.turno}
-          dias={emp.dias}
-        />
-      ))
-    }
+    <main class="space-y-4 animate-fade-in">
+      {
+        employeesWeek.map((emp, index) => (
+          <EmployeeCard
+            key={`${emp.empleado}-${index}`}
+            empleado={emp.empleado}
+            turno={emp.turno}
+            dias={emp.dias}
+            style={`animation-delay: ${index * 50}ms; animation-fill-mode: both;`}
+          />
+        ))
+      }
+    </main>
   </AppLayout>
 </BaseLayout>

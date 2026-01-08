@@ -7,8 +7,8 @@ const nextUrl = `?weekOffset=${offset + 1}`;
 ---
 
 <section class="max-w-md mx-auto min-h-screen flex flex-col">
-  <header
-    class="sticky top-0 bg-surface/90 backdrop-blur border-b border-slate-800 p-4 z-10"
+<header
+    class="sticky top-0 bg-gradient-to-r from-surface/80 via-surface/70 to-surface/60 backdrop-blur-2xl border-b border-white/10 p-4 z-10 shadow-lg shadow-black/20"
   >
     <h1 class="text-lg font-semibold">Turnos</h1>
   </header>
@@ -20,14 +20,14 @@ const nextUrl = `?weekOffset=${offset + 1}`;
   </main>
 
 <footer
-    class="sticky bottom-0 bg-surface/95 backdrop-blur border-t border-slate-800 p-3 flex justify-around text-sm"
+    class="sticky bottom-0 bg-gradient-to-r from-surface/90 via-surface/80 to-surface/70 backdrop-blur-2xl border-t border-white/10 p-3 flex justify-around text-sm shadow-lg shadow-black/20"
   >
     <a 
       href="/" 
-      class={`px-4 py-2 rounded-lg transition-all ${
+      class={`px-4 py-2 rounded-lg transition-all backdrop-blur-sm ${
         url.pathname === '/' 
-          ? 'bg-accent text-base font-semibold' 
-          : 'text-accent hover:bg-slate-800'
+          ? 'bg-gradient-to-r from-accent/80 to-accent/60 text-base font-semibold border border-accent/50 shadow-lg shadow-accent/30' 
+          : 'text-accent hover:bg-gradient-to-r hover:from-surface/40 hover:to-surface/20 hover:border hover:border-white/20'
       }`}
     >
       Semana

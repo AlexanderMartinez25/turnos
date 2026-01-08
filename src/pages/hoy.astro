@@ -59,9 +59,9 @@ const dayLabel = formatDayLabel(today, todayKey);
         </div>
       )}
 
-      <ul class="space-y-3">
-        {agenda.map((item) => (
-          <li class="bg-surface rounded-lg p-4 border border-slate-800">
+<ul class="grid grid-cols-2 gap-3 animate-fade-in">
+        {agenda.map((item, index) => (
+          <li style={`animation-delay: ${index * 30}ms; animation-fill-mode: both;`} class="relative bg-gradient-to-br from-surface/40 via-surface/30 to-surface/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/20 shadow-2xl shadow-black/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-tr before:from-white/10 before:via-transparent before:to-transparent before:opacity-50 before:pointer-events-none">
             <div class="flex justify-between items-start gap-3">
               <!-- Info principal -->
               <div>
@@ -91,16 +91,16 @@ const dayLabel = formatDayLabel(today, todayKey);
               </div>
 
               <!-- Info secundaria -->
-              <div class="text-right">
+              <div class="text-right ">
                 {item.edificio && (
-                  <span class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-300">
+                <span class="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-surface/60 to-surface/40 backdrop-blur-md border border-white/20 text-slate-300 shadow-lg ">
                     {item.edificio}
                   </span>
                 )}
 
-                <p class="text-[10px] text-slate-500 mt-1">
+                <span class="inline-block text-xs px-2 py-1 rounded-full bg-gradient-to-r from-accent/40 to-accent/20 backdrop-blur-md border border-accent/50 text-accent font-semibold mt-1 shadow-lg">
                   Turno {item.turno}
-                </p>
+                </span>
               </div>
             </div>
           </li>

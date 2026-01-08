@@ -1,8 +1,10 @@
 import { EMPLEADOS } from "../data/empleados";
 import { TURNOS, type DiaSemana } from "../data/turnos";
+import { EDIFICIOS } from "../data/edificios";
 import { resolveTurnoActual } from "./rotation";
 import { startOfWeek } from "./calendar";
 import { resolveDaySchedule } from "./schedule";
+import { resolveBuilding } from "./building";
 
 const DAYS: DiaSemana[] = [
   "lunes",
@@ -26,11 +28,17 @@ export function resolveWeek(targetDate: Date) {
       throw new Error(`Turno ${turno} no definido en TURNOS`);
     }
 
-    // Resolver días de la semana
+// Resolver días de la semana
     const dias: Record<DiaSemana, any> = {} as any;
 
     for (const day of DAYS) {
-      dias[day] = resolveDaySchedule(shift, day);
+      const daySchedule = resolveDaySchedule(shift, day);
+      const edificio = resolveBuilding(turno, day, EDIFICIOS);
+      
+      dias[day] = {
+        ...daySchedule,
+        edificio
+      };
     }
 
     return {
