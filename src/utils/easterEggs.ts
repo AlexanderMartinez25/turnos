@@ -187,11 +187,11 @@ export class EasterEggManager {
   private static showCat(): void {
     // Get random cat GIF from public/miau
     const catGifs = [
-      "/public/miau/bvbjkfpr4qje1.gif",
-      "/public/miau/0eq08fpr4qje1.gif",
-      "/public/miau/gato-dice-no.gif",
-      "/public/miau/zvxvdfgp7mci6uo4.gif",
-      "/public/miau/391eu1s8wn9e1.gif",
+      "/miau/bvbjkfpr4qje1.gif",
+      "/miau/0eq08fpr4qje1.gif",
+      "/miau/gato-dice-no.gif",
+      "/miau/zvxvdfgp7mci6uo4.gif",
+      "/miau/391eu1s8wn9e1.gif",
     ];
     const randomCat = catGifs[Math.floor(Math.random() * catGifs.length)];
 
@@ -309,15 +309,15 @@ export class EasterEggManager {
 
     // Add horrific image
     const img = document.createElement("img");
-    img.src = "/src/screamer/horror.png";
+    img.src = "/screamer/horror.png";
     img.style.cssText =
-      "width: 80vw; height: 65vh; opacity: 0; transition: opacity 0.3s;";
+      "max-width: 80vw; max-height: 80vh; opacity: 0; transition: opacity 0.3s;";
     overlay.appendChild(img);
 
     document.body.appendChild(overlay);
 
     // Play terrifying scream sound
-    const audio = new Audio("/src/screamer/scream.mp3");
+    const audio = new Audio("/screamer/scream.mp3");
     audio.volume = 1.0; // Maximum volume for terror
 
     // Sequence: black screen for 0.5s, then image + sound
