@@ -1,6 +1,6 @@
 // Easter Eggs Manager for Turnos Site
 // Probability and configurations
-const PROBABILITY = 0.16; // 0.2%
+const PROBABILITY = 1; // 0.2%
 
 const ABSURD_MESSAGES = [
   "Este turno fue aprobado por un pato con corbata.",
@@ -185,13 +185,13 @@ export class EasterEggManager {
   }
 
   private static showCat(): void {
-    // Get random cat GIF from src/miau
+    // Get random cat GIF from public/miau
     const catGifs = [
-      "/src/miau/bvbjkfpr4qje1.gif",
-      "/src/miau/0eq08fpr4qje1.gif",
-      "/src/miau/gato-dice-no.gif",
-      "/src/miau/zvxvdfgp7mci6uo4.gif",
-      "/src/miau/391eu1s8wn9e1.gif",
+      "/public/miau/bvbjkfpr4qje1.gif",
+      "/public/miau/0eq08fpr4qje1.gif",
+      "/public/miau/gato-dice-no.gif",
+      "/public/miau/zvxvdfgp7mci6uo4.gif",
+      "/public/miau/391eu1s8wn9e1.gif",
     ];
     const randomCat = catGifs[Math.floor(Math.random() * catGifs.length)];
 
