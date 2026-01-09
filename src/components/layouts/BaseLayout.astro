@@ -132,7 +132,13 @@ const { title = "Turnos" } = Astro.props;
         50% { opacity: 0.6; }
         90% { opacity: 0.3; }
         100% { transform: translateY(100%); opacity: 0; }
-      }
-    </style>
-  </body>
-</html>
+       }
+     </style>
+
+     <!-- Easter Eggs Script -->
+     <script>
+       import { EasterEggManager } from '../../utils/easterEggs';
+       EasterEggManager.init();
+     </script>
+   </body>
+ </html>

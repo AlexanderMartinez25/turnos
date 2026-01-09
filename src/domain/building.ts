@@ -5,7 +5,7 @@ export function resolveBuilding(
   day: Day,
   buildings: BuildingAssignment[]
 ): string | null {
-  if (day === "sábado" || day === "domingo") return null;
+  if (day === "sabado" || day === "domingo") return null;
 
   const entry = buildings.find((b) => b.turnoId === turnoId);
   return entry?.asignacion[day] ?? null;
