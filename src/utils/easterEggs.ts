@@ -1,6 +1,6 @@
 // Easter Eggs Manager for Turnos Site
 // Probability and configurations
-const PROBABILITY = 1; // 0.2%
+const PROBABILITY = 0.16; // 0.2%
 
 const ABSURD_MESSAGES = [
   "Este turno fue aprobado por un pato con corbata.",
