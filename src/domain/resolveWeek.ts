@@ -1,5 +1,6 @@
 import { EMPLEADOS } from "../data/empleados";
-import { TURNOS, type DiaSemana } from "../data/turnos";
+import { TURNOS } from "../data/turnos";
+import type { Day as DiaSemana } from "../data/types";
 import { EDIFICIOS } from "../data/edificios";
 import { resolveTurnoActual } from "./rotation";
 import { startOfWeek } from "./calendar";
