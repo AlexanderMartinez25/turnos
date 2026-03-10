@@ -36,8 +36,8 @@ export const EDIFICIOS: BuildingAssignment[] = [
   {
     turnoId: 6,
     asignacion: {
-      martes: "CA",
-      miercoles: "C4-9",
+      lunes: "CA",
+      martes: "C4-9",
       jueves: "C6",
       viernes: "C2",
     },
@@ -57,7 +57,7 @@ export const EDIFICIOS: BuildingAssignment[] = [
     asignacion: {
       lunes: "C6",
       martes: "CA",
-      miercoles: "CA",
+      miercoles: "C2",
       jueves: "C5",
       viernes: "C4-7-9",
     },
